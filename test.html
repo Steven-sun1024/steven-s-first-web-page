@@ -5,116 +5,20 @@
 <title>花旗木</title>
 </head>
 <body style="background-color:lightgrey">
-<a id="first">我最喜歡的一種樹</a>	
+<a id="first">我喜歡的樹</a>	
 <h1>這是一張花旗木的圖片</h1>
 <p>在我的家鄉有不少這種樹木</p>
 <p>每年到了三四月的時候就會開花</p>
 <p>這種花的花期很長 基本上這兩個月都會處於綻放的狀態</p>
+<p>在金砂里這個地方 有一個花旗木步道 在開花的時候 如果我有回阿祖家 都會順便去看一看</p>
+<p>這條步道的遊客很多 當然也有很多攤販 去年開花的時候</p>
+<p>我在這邊買了冰淇淋還有冬瓜茶 還有幫親戚們拍照</p>
 <br>
 <img src="https://www.easygong.com/wp-content/uploads/2022/03/%E8%A5%BF%E6%B8%AF%E9%87%91%E6%B2%99%E9%87%8C%E8%8A%B1%E6%97%97%E6%9C%A8-38.jpg">
 <a href="https://www.youtube.com/" target="_blank"></a>
-<a href="#first">Go To First Section</a><br>
-<a href="https://www.google.com.tw/?hl=zh_TW">這個連結</a>會連到google<br>
+<a href="#first">回到第一行</a><br>
 </body>
 </html>
 <table border="1">
 
-<!DOCTYPE html>
-<html>
-<head>
-  <title>井字遊戲</title>
-  <style>
-    table {
-      border-collapse: collapse;
-      width: 300px;
-      height: 300px;
-    }
 
-    td {
-      width: 100px;
-      height: 100px;
-      text-align: center;
-      font-size: 36px;
-      border: 1px solid black;
-      cursor: pointer;
-    }
-  </style>
-</head>
-<body>
-  <table id="gameBoard">
-    <tr>
-      <td data-index="0"></td>
-      <td data-index="1"></td>
-      <td data-index="2"></td>
-    </tr>
-    <tr>
-      <td data-index="3"></td>
-      <td data-index="4"></td>
-      <td    
-data-index="5"></td>
-    </tr>
-    <tr>
-      <td data-index="6"></td>
-      <td data-index="7"></td>
-      <td data-index="8"></td>
-    </tr>
-  </table>
-
-  <script>
-
-const gameBoard = document.getElementById('gameBoard');
-    const cells = document.querySelectorAll('td');
-    let currentPlayer = 'X';
-
-    // 獲勝組合
-    const winningCombinations = [
-      [0, 1, 2], [3, 4, 5], [6, 7, 8], // 横排
-      [0, 3, 6], [1, 4, 7], [2, 5, 8], // 直排
-      [0, 4, 8], [2, 4, 6] // 斜排
-    ];
-
-    // 監聽每個格子的點擊事件
-    cells.forEach(cell => {
-      cell.addEventListener('click', () => {
-        if (cell.textContent === '') {
-          cell.textContent = currentPlayer;
-          if (checkWin()) {
-            alert(`${currentPla   
-yer} 獲勝！`);
-            resetGame();
-          } else if (checkDraw()) {
-            alert('平手！');
-            resetGame();
-          } else {
-            currentPlayer = currentPlayer === 'X' ? 'O' : 'X';
-          }
-        }
-      });
-    });
-
-    // 檢查是否有玩家獲勝
-    function checkWin() {
-      return winningCombinations.some(combination => {
-        return combination.every(index => {
-          return cells[index].textContent === curre   
-ntPlayer;
-        });
-      });
-    }
-
-    //    
-檢查是否為平手
-    function checkDraw() {
-      return [...cells].every(cell => cell.textContent !== '');
-    }
-
-    // 重置遊戲
-    function resetGame() {
-      cells.forEach(cell => {
-        cell.textContent = '';
-      });
-      currentPlayer = 'X';
-    }
-  </script>
-</body>
-</html>
