@@ -19,3 +19,102 @@
 </html>
 <table border="1">
 
+<!DOCTYPE html>
+<html>
+<head>
+  <title>井字遊戲</title>
+  <style>
+    table {
+      border-collapse: collapse;
+      width: 300px;
+      height: 300px;
+    }
+
+    td {
+      width: 100px;
+      height: 100px;
+      text-align: center;
+      font-size: 36px;
+      border: 1px solid black;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <table id="gameBoard">
+    <tr>
+      <td data-index="0"></td>
+      <td data-index="1"></td>
+      <td data-index="2"></td>
+    </tr>
+    <tr>
+      <td data-index="3"></td>
+      <td data-index="4"></td>
+      <td    
+data-index="5"></td>
+    </tr>
+    <tr>
+      <td data-index="6"></td>
+      <td data-index="7"></td>
+      <td data-index="8"></td>
+    </tr>
+  </table>
+
+  <script>
+
+const gameBoard = document.getElementById('gameBoard');
+    const cells = document.querySelectorAll('td');
+    let currentPlayer = 'X';
+
+    // 獲勝組合
+    const winningCombinations = [
+      [0, 1, 2], [3, 4, 5], [6, 7, 8], // 横排
+      [0, 3, 6], [1, 4, 7], [2, 5, 8], // 直排
+      [0, 4, 8], [2, 4, 6] // 斜排
+    ];
+
+    // 監聽每個格子的點擊事件
+    cells.forEach(cell => {
+      cell.addEventListener('click', () => {
+        if (cell.textContent === '') {
+          cell.textContent = currentPlayer;
+          if (checkWin()) {
+            alert(`${currentPla   
+yer} 獲勝！`);
+            resetGame();
+          } else if (checkDraw()) {
+            alert('平手！');
+            resetGame();
+          } else {
+            currentPlayer = currentPlayer === 'X' ? 'O' : 'X';
+          }
+        }
+      });
+    });
+
+    // 檢查是否有玩家獲勝
+    function checkWin() {
+      return winningCombinations.some(combination => {
+        return combination.every(index => {
+          return cells[index].textContent === curre   
+ntPlayer;
+        });
+      });
+    }
+
+    //    
+檢查是否為平手
+    function checkDraw() {
+      return [...cells].every(cell => cell.textContent !== '');
+    }
+
+    // 重置遊戲
+    function resetGame() {
+      cells.forEach(cell => {
+        cell.textContent = '';
+      });
+      currentPlayer = 'X';
+    }
+  </script>
+</body>
+</html>
