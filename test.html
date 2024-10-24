@@ -23,3 +23,42 @@
 <div style="height:150px;background-color:#f9c81e;text-align:center;padding:1em;"></div>
 <div style="width:50%;float:
 
+def draw_board(board):
+  print('-------------')
+  for i in range(3):
+    print('|', board[i*3], '|', board[i*3+1], '|', board[i*3+2], '|')
+    print('-------------')
+
+def check_win(board, player):
+  # 检查横向、纵向、对角线是否有三个相同的符号
+  for i in range(3):
+    if all(board[i*3+j] == player for j in range(3)) or \
+       all(board[i+j*3] == player for j in range(3)):
+      return True
+  return (board[0] == player and board[4] == player and board[8] == player) or \
+         (board[2] == player and board[4] == player and board[6] == player)
+
+def is_board_full(board):
+  return all(cell != ' ' for cell in board)
+
+def play_game():
+  board = [' '] * 9
+  player = 'X'
+  while True:
+    draw_board(board)
+    move = int(input(f"Player {player}, enter your move (1-9): ")) - 1
+    if board[move] != ' ':
+      print("That space is already taken!")
+      continue
+    board[move] = player
+    if check_win(board, player):
+      draw_board(board)
+      print(f"Player {player} wins!")
+      break
+    if is_board_full(board):
+      draw_board(board)
+      print("It's a tie!")
+      break
+    player = 'O' if player == 'X' else 'X'
+
+play_game()
