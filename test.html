@@ -11,7 +11,7 @@
     print('-------------')
 
 def check_win(board, player):
-  # 检查横向、纵向、对角线是否有三个相同的符号
+  # 檢查横向、縱向、對角線是否有三个相同的符號
   for i in range(3):
     if all(board[i*3+j] == player for j in range(3)) or \
        all(board[i+j*3] == player for j in range(3)):
