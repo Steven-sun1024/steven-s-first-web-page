@@ -1,50 +1,116 @@
 <!DOCTYPE html>
-<html>
+<html lang="zh-Hant">
 <head>
-<link rel="stylesheet" href="https://pyscript.net/alpha/pyscript.css" />     
-<script defer src="https://pyscript.net/alpha/pyscript.js"></script>   </head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Sky Music - 修復版</title>
+    <style>
+        :root { --bg-color: #121212; --key-color: rgba(255,255,255,0.2); }
+        body { 
+            margin: 0; background: var(--bg-color); color: white;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            height: 100vh; overflow: hidden; font-family: sans-serif;
+            touch-action: none; /* 核心：防止手機縮放與捲動 */
+        }
+        #status { margin-bottom: 20px; font-size: 1.2rem; }
+        .grid { 
+            display: grid; grid-template-columns: repeat(5, 1fr); gap: 15px; 
+            perspective: 1000px;
+        }
+        .key {
+            width: 65px; height: 65px; background: var(--key-color);
+            border: 2px solid white; border-radius: 12px;
+            cursor: pointer; transition: all 0.1s;
+            -webkit-user-select: none; user-select: none;
+            -webkit-tap-highlight-color: transparent;
+        }
+        /* 按下時的發光效果 */
+        .key.active { 
+            background: white; transform: scale(0.9) translateZ(20px);
+            box-shadow: 0 0 20px white;
+        }
+        .overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.8); display: flex; flex-direction: column;
+            justify-content: center; align-items: center; z-index: 100;
+        }
+        button {
+            padding: 15px 30px; font-size: 1.5rem; border: none;
+            border-radius: 30px; cursor: pointer; background: white;
+        }
+    </style>
+</head>
 <body>
-<py-script>def draw_board(board):
-  print('-------------')
-  for i in range(3):
-    print('|', board[i*3], '|', board[i*3+1], '|', board[i*3+2], '|')
-    print('-------------')
 
-def check_win(board, player):
-  # 檢查横向、縱向、對角線是否有三个相同的符號
-  for i in range(3):
-    if all(board[i*3+j] == player for j in range(3)) or \
-       all(board[i+j*3] == player for j in range(3)):
-      return True
-  return (board[0] == player and board[4] == player and board[8] == player) or \
-         (board[2] == player and board[4] == player and board[6] == player)
+    <div id="overlay" class="overlay">
+        <h2>Sky Piano</h2>
+        <p>點擊按鈕開始（請確保開啟響鈴模式）</p>
+        <button onclick="startApp()">開始演奏</button>
+    </div>
 
-def is_board_full(board):
-  return all(cell != ' ' for cell in board)
+    <div id="status">準備就緒</div>
+    <div class="grid" id="piano"></div>
 
-def play_game():
-  board = [' '] * 9
-  player = 'X'
-  while True:
-    draw_board(board)
-    move = int(input(f"Player {player}, enter your move (1-9): ")) - 1
-    if board[move] != ' ':
-      print("That space is already taken!")
-      continue
-    board[move] = player
-    if check_win(board, player):
-      draw_board(board)
-      print(f"Player {player} wins!")
-      break
-    if is_board_full(board):
-      draw_board(board)
-      print("It's a tie!")
-      break
-    player = 'O' if player == 'X' else 'X'
+    <script>
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        const piano = document.getElementById('piano');
+        const status = document.getElementById('status');
+        
+        // 光遇音階頻率 (C4 - C6)
+        const notes = [
+            261.63, 293.66, 329.63, 349.23, 392.00,
+            440.00, 493.88, 523.25, 587.33, 659.25,
+            698.46, 783.99, 880.00, 987.77, 1046.50
+        ];
 
-play_game()</py-script>
+        function startApp() {
+            audioCtx.resume();
+            document.getElementById('overlay').style.display = 'none';
+            initPiano();
+        }
 
+        function initPiano() {
+            notes.forEach((freq, i) => {
+                const key = document.createElement('div');
+                key.className = 'key';
+                
+                // 關鍵：使用 pointerdown 支援多點觸控且無延遲
+                key.addEventListener('pointerdown', (e) => {
+                    e.preventDefault();
+                    playSound(freq);
+                    key.classList.add('active');
+                });
+
+                // 移除效果
+                const release = () => key.classList.remove('active');
+                key.addEventListener('pointerup', release);
+                key.addEventListener('pointerleave', release);
+                key.addEventListener('pointercancel', release);
+
+                piano.appendChild(key);
+            });
+            status.innerText = "演奏中 - 支援多指彈奏";
+        }
+
+        function playSound(freq) {
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+
+            // 設置音色 (光遇風格建議用 triangle 或 sine)
+            osc.type = 'triangle';
+            osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+
+            // ADSR 緩衝，避免點擊雜音
+            gain.gain.setValueAtTime(0, audioCtx.currentTime);
+            gain.gain.linearRampToValueAtTime(0.4, audioCtx.currentTime + 0.02);
+            gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.8);
+
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+
+            osc.start();
+            osc.stop(audioCtx.currentTime + 0.8);
+        }
+    </script>
 </body>
 </html>
- 
-
